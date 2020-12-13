@@ -6,10 +6,8 @@ class WriteViewController: UIViewController {
     @IBOutlet weak var timeLabel: UILabel!
     @IBOutlet weak var scroll: UIScrollView!
     @IBOutlet weak var nav: UINavigationItem!
-    @IBOutlet weak var textColorBtn: UIBarButtonItem!
-    @IBOutlet weak var navBarBtn: UIBarButtonItem!
-    @IBAction func textColor(_ sender: Any) {
-    }
+    @IBOutlet weak var textSizeButton: UIButton!
+    
     
     var fontSize: CGFloat = CGFloat(10.0)
     var writeViewEdit: Bool = false
@@ -57,14 +55,13 @@ class WriteViewController: UIViewController {
             self.fontSize = CGFloat(25.0)
         })
         
-        textColorBtn.primaryAction = nil
-        textColorBtn.menu = UIMenu(title: "문자 크기", image: nil, identifier: nil, options: .displayInline, children: [large,medium,small])
+        textSizeButton.showsMenuAsPrimaryAction = true
+        textSizeButton.menu = UIMenu(title: "문자 크기", image: nil, identifier: nil, options: .displayInline, children: [large,medium,small])
         
     }
     
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
-        
     }
     
     

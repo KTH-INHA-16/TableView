@@ -2,8 +2,9 @@ import UIKit
 
 class ViewController: UIViewController {
 
+    var folderName: String = "기본 파일"
     var sections: [String] = ["고정된 메모",""]
-    var fixedMemo: [MemoClass] = []
+    var folder: [String:[MemoClass]] = [:]
     var memo: [MemoClass] = [MemoClass.init(year: "2000", month: "12", day: "13", hour: "0", min: "0", sec: "00")] {
         didSet {
             memo.sort()
@@ -41,7 +42,7 @@ class ViewController: UIViewController {
             } else {
                 memoTable.isEditing = true
                 navBarDelete.isEnabled = true
-                navBarDelete.tintColor = .systemRed
+                navBarDelete.tintColor = .systemYellow
                 removeNavButton.title = "완료"
             }
         }
@@ -69,6 +70,24 @@ class ViewController: UIViewController {
             removeNavButton.title = "편집"
         }
         underLabel.text = "\(memo.count)개의 메모"
+    }
+    
+    @IBAction func unwindToFolder(_ unwindSegue: UIStoryboardSegue) {
+        guard let sourceView = unwindSegue.source as? FolderViewController else{
+            return
+        }
+        
+        folderName = sourceView.folderName
+        folder = sourceView.folder
+        memo = folder[folderName]!
+        memoTable.reloadData()
+        
+        if folderName != "기본 파일" {
+            nav.title = folderName
+        } else {
+            nav.title = "메모"
+        }
+        
     }
     
     @IBAction func unwindToBack(_ unwindSegue: UIStoryboardSegue) {
@@ -124,6 +143,7 @@ class ViewController: UIViewController {
     }
     
     override func viewDidAppear(_ animated: Bool) {
+        print("c \(folderName)")
         underLabel.text = "\(memo.count)개의 메모"
         let upImage = UIImage(systemName: "arrow.up")
         let downImage = UIImage(systemName: "arrow.down")
@@ -162,6 +182,11 @@ class ViewController: UIViewController {
                 vc?.index = 0
             }
             memoTable.reloadData()
+        } else if segue.identifier == "FolderSegue" {
+            let vc = segue.destination as? FolderViewController
+            folder[folderName] = memo
+            vc?.folderName = folderName
+            vc?.folder = folder
         }
     }
     
@@ -229,6 +254,11 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
         cell.timeLabel.sizeToFit()
         cell.titleLabel.text = filteredMemo[indexPath.row].title
         
+        let selectView = UIView()
+        selectView.backgroundColor = #colorLiteral(red: 0.9764705896, green: 0.850980401, blue: 0.5490196347, alpha: 1)
+        selectView.alpha = 0.1
+        cell.selectedBackgroundView = selectView
+        
         return cell
     }
     
@@ -285,7 +315,9 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
         let deleteAction = UIContextualAction(style: .destructive, title:  "삭제", handler: { (ac:UIContextualAction, view:UIView, success:(Bool) -> Void) in
             self.memo.remove(at: self.memo.firstIndex(of: filteredMemo[indexPath.row]) ?? 0)
             self.underLabel.text = "\(self.memo.count)개의 메모"
-            self.memoTable.reloadData()
+            self.memoTable.beginUpdates()
+            self.memoTable.deleteRows(at: [indexPath], with: .automatic)
+            self.memoTable.endUpdates()
             success(true)
             
         })

@@ -9,10 +9,63 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
+        <!--FolderViewController-->
+        <scene sceneID="UPn-GN-DwK">
+            <objects>
+                <viewController storyboardIdentifier="FolderViewController" title="FolderViewController" modalPresentationStyle="fullScreen" useStoryboardIdentifierAsRestorationIdentifier="YES" id="mhh-F6-8lG" customClass="FolderViewController" customModule="TableView" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="TfY-Uk-eKi">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" indicatorStyle="black" dataMode="prototypes" style="plain" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="I4t-f8-tZi">
+                                <rect key="frame" x="0.0" y="140" width="414" height="692"/>
+                                <color key="backgroundColor" systemColor="systemGray6Color"/>
+                                <color key="separatorColor" systemColor="systemGrayColor"/>
+                                <color key="sectionIndexBackgroundColor" systemColor="systemGray6Color"/>
+                                <connections>
+                                    <outletCollection property="gestureRecognizers" destination="CoA-FU-PXT" id="47j-6g-Lpt"/>
+                                </connections>
+                            </tableView>
+                            <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="F2V-sD-Dbh">
+                                <rect key="frame" x="326" y="836" width="68" height="20"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <state key="normal" title="새로운 폴더">
+                                    <color key="titleColor" systemColor="systemYellowColor"/>
+                                </state>
+                                <connections>
+                                    <action selector="makeFolderButton:" destination="mhh-F6-8lG" eventType="touchDown" id="25R-4i-WQc"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="x2g-ic-hj6"/>
+                        <color key="backgroundColor" systemColor="systemGray6Color"/>
+                        <constraints>
+                            <constraint firstItem="x2g-ic-hj6" firstAttribute="bottom" secondItem="I4t-f8-tZi" secondAttribute="bottom" constant="30" id="5MA-Pu-jmF"/>
+                            <constraint firstItem="I4t-f8-tZi" firstAttribute="leading" secondItem="x2g-ic-hj6" secondAttribute="leading" id="EI6-Ld-OXX"/>
+                            <constraint firstItem="x2g-ic-hj6" firstAttribute="trailing" secondItem="F2V-sD-Dbh" secondAttribute="trailing" constant="20" id="ENn-eU-CvZ"/>
+                            <constraint firstItem="x2g-ic-hj6" firstAttribute="bottom" secondItem="F2V-sD-Dbh" secondAttribute="bottom" constant="6" id="HIY-C2-81M"/>
+                            <constraint firstItem="x2g-ic-hj6" firstAttribute="trailing" secondItem="I4t-f8-tZi" secondAttribute="trailing" id="JAR-lw-qLa"/>
+                            <constraint firstItem="I4t-f8-tZi" firstAttribute="top" secondItem="x2g-ic-hj6" secondAttribute="top" id="hwI-Ct-T82"/>
+                        </constraints>
+                    </view>
+                    <navigationItem key="navigationItem" title="폴더" id="K3f-za-Ax1"/>
+                    <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+                    <connections>
+                        <outlet property="folderNavBar" destination="K3f-za-Ax1" id="lpN-qs-y3k"/>
+                        <outlet property="folderTableView" destination="I4t-f8-tZi" id="DrT-kR-Irn"/>
+                        <outlet property="navBar" destination="K3f-za-Ax1" id="ru2-h6-ByF"/>
+                        <segue destination="CoA-FU-PXT" kind="unwind" identifier="unwindToFolder" unwindAction="unwindToFolder:" id="7l2-uM-Elb"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="3N0-Rk-Hhu" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+                <exit id="CoA-FU-PXT" userLabel="Exit" sceneMemberID="exit"/>
+            </objects>
+            <point key="canvasLocation" x="986.95652173913049" y="891.96428571428567"/>
+        </scene>
         <!--메모-->
         <scene sceneID="tne-QT-ifu">
             <objects>
-                <viewController id="BYZ-38-t0r" customClass="ViewController" customModule="TableView" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController modalPresentationStyle="fullScreen" id="BYZ-38-t0r" customClass="ViewController" customModule="TableView" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -71,9 +124,12 @@
                         <leftBarButtonItems>
                             <barButtonItem title="Item" image="arrow.left" catalog="system" id="cV3-pV-fsd">
                                 <color key="tintColor" systemColor="systemYellowColor"/>
+                                <connections>
+                                    <segue destination="mhh-F6-8lG" kind="show" identifier="FolderSegue" id="dF1-u8-WWd"/>
+                                </connections>
                             </barButtonItem>
                             <barButtonItem image="trash.fill" catalog="system" id="jQj-Wj-1S9">
-                                <color key="tintColor" systemColor="systemRedColor"/>
+                                <color key="tintColor" systemColor="systemGray6Color"/>
                                 <connections>
                                     <action selector="navBarTrashAction:" destination="BYZ-38-t0r" id="SQH-So-iD0"/>
                                 </connections>
@@ -98,7 +154,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="905.79710144927549" y="109.82142857142857"/>
+            <point key="canvasLocation" x="988" y="121"/>
         </scene>
         <!--Write View Controller-->
         <scene sceneID="OKq-NJ-IlL">
@@ -164,26 +220,39 @@
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="gc4-do-nLD">
-                        <barButtonItem key="leftBarButtonItem" title="메모" image="arrow.left" catalog="system" id="XDT-Ze-Iq1">
-                            <color key="tintColor" systemColor="systemYellowColor"/>
-                            <connections>
-                                <segue destination="pfx-dA-u0Y" kind="unwind" identifier="BackSegue" unwindAction="unwindToBack:" id="mby-2n-7aJ"/>
-                            </connections>
+                        <barButtonItem key="leftBarButtonItem" title="메모" image="chevron.left" catalog="system" style="plain" id="UcH-gk-Oe3">
+                            <button key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="9ks-Kl-PBQ">
+                                <rect key="frame" x="20" y="11" width="45" height="22"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="tintColor" systemColor="systemYellowColor"/>
+                                <state key="normal" title="메모">
+                                    <color key="titleColor" systemColor="systemYellowColor"/>
+                                    <imageReference key="image" image="chevron.left" catalog="system" symbolScale="large" renderingMode="template"/>
+                                </state>
+                                <connections>
+                                    <segue destination="pfx-dA-u0Y" kind="unwind" unwindAction="unwindToBack:" id="2f8-zZ-bLE"/>
+                                </connections>
+                            </button>
                         </barButtonItem>
-                        <barButtonItem key="rightBarButtonItem" title="Item" id="vrU-k8-coz">
-                            <imageReference key="image" image="pencil" catalog="system" symbolScale="medium" renderingMode="template"/>
-                            <color key="tintColor" systemColor="systemYellowColor"/>
-                            <connections>
-                                <action selector="textColor:" destination="LMu-vh-liw" id="nVP-lq-0Vk"/>
-                            </connections>
+                        <barButtonItem key="rightBarButtonItem" style="plain" id="BhY-P5-qpD">
+                            <button key="customView" opaque="NO" contentMode="scaleToFill" semanticContentAttribute="forceRightToLeft" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="VW3-ZK-UEj">
+                                <rect key="frame" x="348" y="11" width="46" height="22.5"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="tintColor" systemColor="systemYellowColor"/>
+                                <state key="normal">
+                                    <color key="titleColor" systemColor="systemYellowColor"/>
+                                    <imageReference key="image" image="pencil.tip" catalog="system" symbolScale="large"/>
+                                    <preferredSymbolConfiguration key="preferredSymbolConfiguration" scale="medium" weight="semibold"/>
+                                </state>
+                            </button>
                         </barButtonItem>
                     </navigationItem>
                     <value key="contentSizeForViewInPopover" type="size" width="414" height="922"/>
                     <connections>
                         <outlet property="nav" destination="gc4-do-nLD" id="LTe-UE-exP"/>
-                        <outlet property="navBarBtn" destination="XDT-Ze-Iq1" id="IdN-oH-3hS"/>
                         <outlet property="scroll" destination="8S9-Wf-YAf" id="fGs-oR-xly"/>
-                        <outlet property="textColorBtn" destination="vrU-k8-coz" id="zBt-Mg-QBF"/>
+                        <outlet property="textSizeButton" destination="VW3-ZK-UEj" id="sdR-Nq-ICk"/>
                         <outlet property="timeLabel" destination="bmU-2Y-RVc" id="97Z-aJ-Ylk"/>
                         <outlet property="writeView" destination="IGP-Ux-v9b" id="5As-jV-xdY"/>
                     </connections>
@@ -191,13 +260,14 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="p8M-af-eIN" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
                 <exit id="pfx-dA-u0Y" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
-            <point key="canvasLocation" x="1708.6956521739132" y="109.82142857142857"/>
+            <point key="canvasLocation" x="1807" y="121"/>
         </scene>
         <!--메모-->
         <scene sceneID="Uds-E2-40u">
             <objects>
-                <navigationController title="메모" automaticallyAdjustsScrollViewInsets="NO" hidesBarsWhenKeyboardAppears="YES" id="fF3-Yn-ZSt" sceneMemberID="viewController">
+                <navigationController title="메모" automaticallyAdjustsScrollViewInsets="NO" modalPresentationStyle="fullScreen" hidesBarsWhenKeyboardAppears="YES" id="fF3-Yn-ZSt" sceneMemberID="viewController">
                     <toolbarItems/>
+                    <navigationItem key="navigationItem" id="dVw-Mo-ivC"/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" largeTitles="YES" id="RLU-NS-NQz">
                         <rect key="frame" x="0.0" y="44" width="414" height="96"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -209,17 +279,18 @@
                     </navigationBar>
                     <nil name="viewControllers"/>
                     <connections>
-                        <segue destination="BYZ-38-t0r" kind="relationship" relationship="rootViewController" id="4qe-C1-UqY"/>
+                        <segue destination="BYZ-38-t0r" kind="relationship" relationship="rootViewController" destinationCreationSelector="BackSegue" id="4qe-C1-UqY"/>
                     </connections>
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="9eH-jZ-qid" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="50.724637681159422" y="109.82142857142857"/>
+            <point key="canvasLocation" x="151" y="121"/>
         </scene>
     </scenes>
     <resources>
         <image name="arrow.left" catalog="system" width="128" height="98"/>
-        <image name="pencil" catalog="system" width="128" height="113"/>
+        <image name="chevron.left" catalog="system" width="96" height="128"/>
+        <image name="pencil.tip" catalog="system" width="99" height="128"/>
         <image name="square.and.pencil" catalog="system" width="128" height="115"/>
         <image name="square.grid.2x2" catalog="system" width="128" height="114"/>
         <image name="trash" catalog="system" width="121" height="128"/>
@@ -232,9 +303,6 @@
         </systemColor>
         <systemColor name="systemGrayColor">
             <color red="0.55686274509803924" green="0.55686274509803924" blue="0.57647058823529407" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-        </systemColor>
-        <systemColor name="systemRedColor">
-            <color red="1" green="0.23137254901960785" blue="0.18823529411764706" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="systemYellowColor">
             <color red="1" green="0.80000000000000004" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
