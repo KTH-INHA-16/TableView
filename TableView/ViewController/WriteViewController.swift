@@ -8,6 +8,9 @@ class WriteViewController: UIViewController {
     @IBOutlet weak var nav: UINavigationItem!
     @IBOutlet weak var textSizeButton: UIButton!
     
+    @IBAction func Back(_ sender: Any) {
+        performSegue(withIdentifier: "unwindToBack", sender: nil)
+    }
     
     var fontSize: CGFloat = CGFloat(10.0)
     var writeViewEdit: Bool = false

@@ -86,7 +86,8 @@ extension FolderViewController: UITableViewDataSource, UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
-        if indexPath.row != 0{
+        let key = Array(folder.keys)[indexPath.row]
+        if key != "기본 파일"{
             let deleteAction = UIContextualAction(style: .destructive, title: nil, handler: { _, _, _ in
                 let key = Array(self.folder.keys)[indexPath.row]
                 self.folder.removeValue(forKey: key)
@@ -102,7 +103,8 @@ extension FolderViewController: UITableViewDataSource, UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
-        if indexPath.row != 0{
+        let key = Array(folder.keys)[indexPath.row]
+        if key != "기본 파일" {
             let changeAction = UIContextualAction(style: .normal, title: nil, handler: { _, _, _ in
                 let alert = UIAlertController(title: "폴더명 변경", message: nil, preferredStyle: .alert)
                 alert.addTextField()
@@ -113,7 +115,7 @@ extension FolderViewController: UITableViewDataSource, UITableViewDelegate {
                     guard let text = alert.textFields?[0].text else {
                         return
                     }
-                    if text != key {
+                    if text != key && self.folder[text] == nil{
                         self.folder.removeValue(forKey: key)
                         self.folder[text] = tempMemo
                         self.folderTableView.reloadData()

@@ -2,6 +2,7 @@ import UIKit
 
 class ViewController: UIViewController {
 
+    var memoDataSource: MemoTableViewDataSource!
     var folderName: String = "기본 파일"
     var sections: [String] = ["고정된 메모",""]
     var folder: [String:[MemoClass]] = [:]
@@ -19,6 +20,9 @@ class ViewController: UIViewController {
             temp = ne
         }
     }
+    @IBAction func writeGesture(_ sender: Any) {
+        performSegue(withIdentifier: "MemoSegue", sender: nil)
+    }
     
     
     @IBOutlet weak var removeNavButton: UIBarButtonItem!
@@ -30,7 +34,7 @@ class ViewController: UIViewController {
     @IBOutlet weak var underLabel: UILabel!
     @IBAction func firstwriteBtn(_ sender: Any) {
         memoTable.isEditing = false
-        performSegue(withIdentifier: "MemoSegue", sender: nil)
+        //performSegue(withIdentifier: "MemoSegue", sender: nil)
     }
     @IBAction func removeNavButton(_ sender: Any) {
         if memo.count > 0 {
@@ -63,6 +67,7 @@ class ViewController: UIViewController {
             // 3
             memoTable.beginUpdates()
             memoTable.deleteRows(at: selectedRows, with: .automatic)
+            memoDataSource.setMemo(memo: memo)
             memoTable.endUpdates()
             memoTable.isEditing = false
             navBarDelete.isEnabled = false
@@ -80,6 +85,7 @@ class ViewController: UIViewController {
         folderName = sourceView.folderName
         folder = sourceView.folder
         memo = folder[folderName]!
+        memoDataSource.setMemo(memo: memo)
         memoTable.reloadData()
         
         if folderName != "기본 파일" {
@@ -96,6 +102,7 @@ class ViewController: UIViewController {
         }
         if sourceView.writeView.text == "" {
             memo.remove(at: sourceView.index)
+            memoDataSource.setMemo(memo: memo)
         } else {
             memo[sourceView.index].contents = sourceView.writeView.text
             let strArray = sourceView.writeView.text.components(separatedBy: "\n")
@@ -118,6 +125,7 @@ class ViewController: UIViewController {
             }
             memo[sourceView.index].font = sourceView.fontSize
         }
+        memoDataSource.setMemo(memo: memo)
         memoTable.reloadData()
     }
     
@@ -132,8 +140,10 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        memoDataSource = MemoTableViewDataSource(memo: memo, sections: sections)
         nav.largeTitleDisplayMode = .automatic
-        self.memoTable.dataSource = self
+        self.memoTable.dataSource = memoDataSource
+        self.memoTable.delegate = self
         
         memoTable.separatorStyle = .none
         let nibCell = UINib(nibName: "MemoTableViewCell", bundle: nil)
@@ -149,10 +159,12 @@ class ViewController: UIViewController {
         let downImage = UIImage(systemName: "arrow.down")
         let up = UIAction(title: "최신순", image: upImage, handler: { _ in
             self.memo = self.memo.sorted(by: >)
+            self.memoDataSource.setMemo(memo: self.memo)
             self.memoTable.reloadData()
         })
         let down = UIAction(title: "오래된순", image: downImage, handler: { _ in
             self.memo = self.memo.sorted(by: <)
+            self.memoDataSource.setMemo(memo: self.memo)
             self.memoTable.reloadData()
         })
         
@@ -160,6 +172,10 @@ class ViewController: UIViewController {
         sort.showsMenuAsPrimaryAction = true
         navBarDelete.isEnabled = false
         navBarDelete.tintColor = .systemGray6
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        memoTable.reloadData()
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -176,6 +192,7 @@ class ViewController: UIViewController {
                 uploadDate()
                 newMemo = temp
                 memo.append(temp)
+                memoDataSource.setMemo(memo: memo)
                 memo = memo.sorted()
                 vc?.memo = memo[0]
                 vc?.fontSize = memo[0].font
@@ -197,11 +214,27 @@ class ViewController: UIViewController {
     
 }
 
-extension ViewController: UITableViewDelegate, UITableViewDataSource {
+extension ViewController: UITableViewDelegate {
     
-    func numberOfSections(in tableView: UITableView) -> Int {
-        return sections.count
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        let filteredMemo = memo.filter { $0.isPined }
+        let nonFilteredMemo = memo.filter { !$0.isPined }
+        
+        if filteredMemo.count != 0 && section == 0 { return CGFloat(25) }
+        else if filteredMemo.count == 0 && section == 0 { return CGFloat(0) }
+        if filteredMemo.count != 0 && section == 1 {
+            if nonFilteredMemo.count != 0 {
+                return CGFloat(3)
+            } else {
+                return CGFloat(0)
+            }
+        }
+        else if filteredMemo.count == 0 && section == 1 { return CGFloat(0) }
+        
+        return CGFloat(3)
     }
+    
+    
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         let pinedPoint = memo.filter { $0.isPined }.count
@@ -210,56 +243,6 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
         } else {
             return memo.count - pinedPoint
         }
-    }
-    
-    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        var title: String?
-        switch section {
-        case 0:
-            title = memo.filter { $0.isPined == true }.count == 0 ? nil : "고정된 메모"
-            return title
-        default:
-            title = memo.filter { $0.isPined == false }.count == 0 ? nil : " "
-            let fixtitle = memo.filter { $0.isPined == true }.count == 0 ? nil : "고정된 메모"
-            if fixtitle == nil {
-                return nil
-            } else {
-                return title
-            }
-        }
-    }
-    
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: "MemoTableViewCell", for: indexPath) as? MemoTableViewCell else {
-            return UITableViewCell()
-        }
-        
-        let filteredMemo = indexPath.section == 0 ? memo.filter { $0.isPined } : memo.filter { !$0.isPined }
-        
-        cell.selectionStyle = .blue
-        if filteredMemo[indexPath.row].able == true {
-            cell.finishSwitch.isOn = true
-        } else {
-            cell.finishSwitch.isOn = false
-        }
-        cell.finishSwitch.tag = memo.firstIndex(of: filteredMemo[indexPath.row]) ?? 0
-        cell.finishSwitch.addTarget(self, action: #selector(swtichSelected(_:)), for: .valueChanged)
-        uploadDate()
-        if temp.compare - filteredMemo[indexPath.row].compare == 0 {
-            cell.timeLabel.text = "\(filteredMemo[indexPath.row].hour)시 \(memo[indexPath.row].min)분 \(memo[indexPath.row].sec)초"
-        } else {
-            cell.timeLabel.text = "\(filteredMemo[indexPath.row].year)년 \(memo[indexPath.row].month)월 \(memo[indexPath.row].day)일"
-        }
-        cell.addtionLabel.text = filteredMemo[indexPath.row].subTitle
-        cell.timeLabel.sizeToFit()
-        cell.titleLabel.text = filteredMemo[indexPath.row].title
-        
-        let selectView = UIView()
-        selectView.backgroundColor = #colorLiteral(red: 0.9764705896, green: 0.850980401, blue: 0.5490196347, alpha: 1)
-        selectView.alpha = 0.1
-        cell.selectedBackgroundView = selectView
-        
-        return cell
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -300,6 +283,7 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
         let action = UIContextualAction(style: .normal,
                                         title: "") { [unowned self]  _, _, _ in
             target.isPined.toggle()
+            memoDataSource.setMemo(memo: memo)
             memoTable.reloadData()
         }
         
@@ -314,6 +298,7 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
         let filteredMemo = indexPath.section == 0 ? memo.filter { $0.isPined } : memo.filter { !$0.isPined }
         let deleteAction = UIContextualAction(style: .destructive, title:  "삭제", handler: { (ac:UIContextualAction, view:UIView, success:(Bool) -> Void) in
             self.memo.remove(at: self.memo.firstIndex(of: filteredMemo[indexPath.row]) ?? 0)
+            self.memoDataSource.setMemo(memo: self.memo)
             self.underLabel.text = "\(self.memo.count)개의 메모"
             self.memoTable.beginUpdates()
             self.memoTable.deleteRows(at: [indexPath], with: .automatic)
@@ -339,6 +324,7 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
                     } else {
                         filteredMemo[indexPath.row].lock = true
                         filteredMemo[indexPath.row].password = text
+                        self.memoDataSource.setMemo(memo: self.memo)
                     }
                 }
                 alert.addAction(ask)
@@ -353,6 +339,7 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
                     if text == filteredMemo[indexPath.row].password {
                         filteredMemo[indexPath.row].lock = false
                         filteredMemo[indexPath.row].password = ""
+                        self.memoDataSource.setMemo(memo: self.memo)
                         return
                     } else {
                         let passwordAlert = UIAlertController.init(title: "비밀번호 해제 실패", message: "실패", preferredStyle: .alert)
@@ -370,14 +357,6 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
         lockAction.backgroundColor = UIColor.systemBlue
         lockAction.image = UIImage(systemName: "lock")
         return UISwipeActionsConfiguration(actions:[deleteAction,lockAction])
-    }
-    
-    @objc func swtichSelected(_ sender: UISwitch) {
-        if sender.isOn {
-            memo[sender.tag].able = true
-        } else {
-            memo[sender.tag].able = false
-        }
     }
     
 }

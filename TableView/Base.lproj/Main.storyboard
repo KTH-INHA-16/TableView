@@ -60,7 +60,7 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="3N0-Rk-Hhu" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
                 <exit id="CoA-FU-PXT" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
-            <point key="canvasLocation" x="986.95652173913049" y="891.96428571428567"/>
+            <point key="canvasLocation" x="987" y="816"/>
         </scene>
         <!--메모-->
         <scene sceneID="tne-QT-ifu">
@@ -105,6 +105,7 @@
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                         <color key="backgroundColor" systemColor="systemGray6Color"/>
+                        <gestureRecognizers/>
                         <constraints>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="nab-pl-q7z" secondAttribute="bottom" constant="3" id="38n-Lb-nBI"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="sxK-Xd-9Ri" secondAttribute="bottom" constant="3" id="5f6-AV-vVV"/>
@@ -119,10 +120,13 @@
                             <constraint firstItem="jIJ-k6-cC4" firstAttribute="centerX" secondItem="6Tk-OE-BBY" secondAttribute="centerX" id="pwE-WZ-odb"/>
                             <constraint firstItem="Dlp-xp-rfe" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" id="s3Z-fV-0m8"/>
                         </constraints>
+                        <connections>
+                            <outletCollection property="gestureRecognizers" destination="iDG-ZG-Hmh" appends="YES" id="NbY-8V-chZ"/>
+                        </connections>
                     </view>
                     <navigationItem key="navigationItem" title="메모" id="gFf-Sk-Rld">
                         <leftBarButtonItems>
-                            <barButtonItem title="Item" image="arrow.left" catalog="system" id="cV3-pV-fsd">
+                            <barButtonItem title="Item" image="chevron.left" catalog="system" id="cV3-pV-fsd">
                                 <color key="tintColor" systemColor="systemYellowColor"/>
                                 <connections>
                                     <segue destination="mhh-F6-8lG" kind="show" identifier="FolderSegue" id="dF1-u8-WWd"/>
@@ -153,6 +157,12 @@
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
+                <screenEdgePanGestureRecognizer requiresExclusiveTouchType="NO" minimumNumberOfTouches="1" maximumNumberOfTouches="1" id="iDG-ZG-Hmh">
+                    <rectEdge key="edges" right="YES"/>
+                    <connections>
+                        <action selector="writeGesture:" destination="BYZ-38-t0r" id="Khz-hB-FTB"/>
+                    </connections>
+                </screenEdgePanGestureRecognizer>
             </objects>
             <point key="canvasLocation" x="988" y="121"/>
         </scene>
@@ -186,12 +196,16 @@
                                     <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" misplaced="YES" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="IGP-Ux-v9b">
                                         <rect key="frame" x="0.0" y="26" width="414" height="748"/>
                                         <color key="backgroundColor" systemColor="systemGray6Color"/>
+                                        <gestureRecognizers/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="748" id="ybd-jn-5h4"/>
                                         </constraints>
                                         <color key="textColor" systemColor="labelColor"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                         <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                                        <connections>
+                                            <outletCollection property="gestureRecognizers" destination="uVa-RR-v7l" appends="YES" id="zcq-GJ-595"/>
+                                        </connections>
                                     </textView>
                                 </subviews>
                                 <constraints>
@@ -231,7 +245,7 @@
                                     <imageReference key="image" image="chevron.left" catalog="system" symbolScale="large" renderingMode="template"/>
                                 </state>
                                 <connections>
-                                    <segue destination="pfx-dA-u0Y" kind="unwind" unwindAction="unwindToBack:" id="2f8-zZ-bLE"/>
+                                    <segue destination="pfx-dA-u0Y" kind="unwind" identifier="unwindToBack" unwindAction="unwindToBack:" id="2f8-zZ-bLE"/>
                                 </connections>
                             </button>
                         </barButtonItem>
@@ -255,10 +269,17 @@
                         <outlet property="textSizeButton" destination="VW3-ZK-UEj" id="sdR-Nq-ICk"/>
                         <outlet property="timeLabel" destination="bmU-2Y-RVc" id="97Z-aJ-Ylk"/>
                         <outlet property="writeView" destination="IGP-Ux-v9b" id="5As-jV-xdY"/>
+                        <segue destination="pfx-dA-u0Y" kind="unwind" unwindAction="unwindToBack:" id="FxR-Ya-yxq"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="p8M-af-eIN" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
                 <exit id="pfx-dA-u0Y" userLabel="Exit" sceneMemberID="exit"/>
+                <screenEdgePanGestureRecognizer minimumNumberOfTouches="1" id="uVa-RR-v7l">
+                    <rectEdge key="edges" left="YES"/>
+                    <connections>
+                        <action selector="Back:" destination="LMu-vh-liw" id="bnH-qY-qYK"/>
+                    </connections>
+                </screenEdgePanGestureRecognizer>
             </objects>
             <point key="canvasLocation" x="1807" y="121"/>
         </scene>
@@ -288,7 +309,6 @@
         </scene>
     </scenes>
     <resources>
-        <image name="arrow.left" catalog="system" width="128" height="98"/>
         <image name="chevron.left" catalog="system" width="96" height="128"/>
         <image name="pencil.tip" catalog="system" width="99" height="128"/>
         <image name="square.and.pencil" catalog="system" width="128" height="115"/>
